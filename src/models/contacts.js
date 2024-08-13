@@ -7,7 +7,7 @@ const contactSchema = new mongoose.Schema(
       required: true,
     },
     phoneNumber: {
-      type: Number,
+      type: String,
       required: true,
     },
     email: {
@@ -26,6 +26,13 @@ const contactSchema = new mongoose.Schema(
   },
   { timestamps: true, versionKey: false },
 );
+
+// contactSchema.pre('save', function (next) {
+//   if (!this.phoneNumber.startsWith('+')) {
+//     this.phoneNumber = `+${this.phoneNumber}`;
+//   }
+//   next();
+// });
 
 const Contact = mongoose.model('Contact', contactSchema);
 
