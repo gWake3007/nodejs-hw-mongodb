@@ -26,6 +26,6 @@ const sessionSchema = new mongoose.Schema(
   { timestamps: true, versionKey: false },
 );
 
-const Session = mongoose.Model('Session', sessionSchema);
+const Session = mongoose.model('Session', sessionSchema);
 
 export { Session };
