@@ -23,6 +23,7 @@ export async function getContactsController(req, res) {
     sortBy,
     sortOrder,
     filter,
+    parentId: req.user._id,
   });
   res.status(200).send({
     status: 200,
@@ -36,7 +37,10 @@ export async function getContactController(req, res, next) {
 
   const contact = await getContact(id);
 
-  if (contact === null) {
+  if (
+    contact === null ||
+    contact.parentId.toString() !== req.user._id.toString()
+  ) {
     return next(createHttpError.NotFound('Contact not found'));
   }
   res.status(200).send({
@@ -53,6 +57,7 @@ export async function createContactController(req, res) {
     email: req.body.email,
     isFavourite: req.body.isFavourite,
     contactType: req.body.contactType,
+    parentId: req.user._id,
   };
 
   const createdContact = await createContact(contact);
@@ -68,7 +73,7 @@ export async function updateContactController(req, res, next) {
   const { id } = req.params;
   const changed = req.body;
 
-  const changedContact = await updateContact(id, changed);
+  const changedContact = await updateContact(id, req.user._id, changed);
 
   if (changedContact === null) {
     return next(createHttpError.NotFound('Contact not found'));
@@ -83,11 +88,20 @@ export async function updateContactController(req, res, next) {
 export async function deleteContactController(req, res, next) {
   const { id } = req.params;
 
-  const contactDelete = await deleteContact(id);
+  const contact = await getContact(id);
 
-  if (contactDelete === null) {
+  if (contact === null) {
     return next(createHttpError.NotFound('Contact not found'));
   }
+
+  if (
+    !contact.userId ||
+    contact.userId.toString() !== req.user._id.toString()
+  ) {
+    return next(createHttpError.NotFound('Contact not found'));
+  }
+
+  await deleteContact(id, req.user._id);
 
   res.status(204).end();
 }
