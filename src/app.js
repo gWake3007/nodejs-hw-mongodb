@@ -1,3 +1,5 @@
+import path from 'node:path';
+import 'dotenv/config';
 import cors from 'cors';
 import pinoHTTP from 'pino-http';
 import express from 'express';
@@ -9,6 +11,8 @@ import { errorHandler } from './middlewares/errorHandler.js';
 import { notFoundHandler } from './middlewares/notFoundHandler.js';
 
 const app = express();
+
+app.use('/avatars', express.static(path.resolve('src', 'public/avatars')));
 
 app.use(cookieParser());
 

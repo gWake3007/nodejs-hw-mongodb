@@ -1,8 +1,12 @@
+import fs from 'node:fs/promises';
+import path from 'node:path';
+
 import createHttpError from 'http-errors';
 
 import { parsePaginationParams } from '../utils/parsePaginationParams.js';
 import { parseSortParams } from '../utils/parseSortParams.js';
 import { parseFilterParams } from '../utils/parseFilterParams.js';
+import { uploadToCloudinary } from '../utils/uploadCloudinary.js';
 
 import {
   getContacts,
@@ -51,6 +55,24 @@ export async function getContactController(req, res, next) {
 }
 
 export async function createContactController(req, res) {
+  let photo = null;
+
+  if (typeof req.file !== 'undefined') {
+    if (process.env.ENABLE_CLOUDINARY === 'true') {
+      const result = await uploadToCloudinary(req.file.path);
+      await fs.unlink(req.file.path);
+
+      photo = result.secure_url;
+    } else {
+      await fs.rename(
+        req.file.path,
+        path.resolve('src', 'public/avatars', req.file.filename),
+      );
+
+      photo = `http://localhost:3000/avatars/${req.file.filename}`;
+    }
+  }
+
   const contact = {
     name: req.body.name,
     phoneNumber: req.body.phoneNumber,
@@ -58,6 +80,7 @@ export async function createContactController(req, res) {
     isFavourite: req.body.isFavourite,
     contactType: req.body.contactType,
     parentId: req.user._id,
+    photo,
   };
 
   const createdContact = await createContact(contact);
@@ -72,6 +95,26 @@ export async function createContactController(req, res) {
 export async function updateContactController(req, res, next) {
   const { id } = req.params;
   const changed = req.body;
+
+  let photo = null;
+
+  if (typeof req.file !== 'undefined') {
+    if (process.env.ENABLE_CLOUDINARY === 'true') {
+      const result = await uploadToCloudinary(req.file.path);
+      await fs.unlink(req.file.path);
+
+      photo = result.secure_url;
+    } else {
+      await fs.rename(
+        req.file.path,
+        path.resolve('src', 'public/avatars', req.file.filename),
+      );
+
+      photo = `http://localhost:3000/avatars/${req.file.filename}`;
+    }
+
+    changed.photo = photo;
+  }
 
   const changedContact = await updateContact(id, req.user._id, changed);
 
