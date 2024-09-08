@@ -1,12 +1,12 @@
 import fs from 'node:fs';
 import path from 'node:path';
+import handlebars from 'handlebars';
+import { User } from '../models/user.js';
 
 import crypto from 'node:crypto';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
-import handlebars from 'handlebars';
 import createHttpError from 'http-errors';
-import { User } from '../models/user.js';
 import { Session } from '../models/session.js';
 import { sendMail } from '../utils/sendMail.js';
 import {
@@ -96,26 +96,33 @@ export async function sendResetEmail(email) {
 
   const templateSource = fs.readFileSync(
     path.resolve('src/templates/reset-password.hbs'),
-    { encoding: 'UTF-8' },
+    { encoding: 'utf-8' },
   );
 
   const template = handlebars.compile(templateSource);
 
   const html = template({ name: user.name, resetUrl });
 
-  try {
-    await sendMail({
-      from: SMTP.FROM_EMAIL,
-      to: email,
-      subject: 'Reset your password',
-      html,
-    });
-  } catch {
-    throw createHttpError(
-      500,
-      'Failed to send the email, please try again later.',
-    );
-  }
+  //   try {
+  //     await sendMail({
+  //       from: SMTP.FROM_EMAIL,
+  //       to: email,
+  //       subject: 'Reset your password',
+  //       html,
+  //     });
+  //   } catch {
+  //     throw createHttpError(
+  //       500,
+  //       'Failed to send the email, please try again later.',
+  //     );
+  //   }
+
+  await sendMail({
+    from: SMTP.FROM_EMAIL,
+    to: email,
+    subject: 'Reset your password',
+    html,
+  });
 }
 
 export async function resetPassword(password, token) {
