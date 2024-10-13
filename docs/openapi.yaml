@@ -13,7 +13,7 @@ tags:
     description: Auth operations.
 servers:
   - url: http://127.0.0.1:3000
-  - url: https://nodejs-hw-mongodb-2-bkyf.onrender.com
+  - url: https://nodejs-hw-mongodb-finaly.onrender.com
 paths:
   /contacts/{contactId}:
     get:
