@@ -1,0 +1,24 @@
+description: 'Bad Request. The request could not be understood or was missing required parameters.'
+content:
+  application/json:
+    schema:
+      type: object
+      required:
+        - status
+        - message
+        - data
+      properties:
+        status:
+          type: integer
+          example: 400
+        message:
+          type: string
+          example: 'Invalid input data or missing required fields'
+        data:
+          type: object
+          properties:
+            errors:
+              type: array
+              items:
+                type: string
+              example: ['name is required', 'email must be a valid address']
