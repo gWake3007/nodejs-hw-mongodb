@@ -13,7 +13,6 @@ requestBody:
         required:
           - name
           - phoneNumber
-          - isFavourite
           - contactType
         properties:
           name:

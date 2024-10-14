@@ -36,6 +36,11 @@ requestBody:
           isFavourite:
             type: boolean
             description: Indicates if the contact is marked as favourite.
+          photo:
+            description: 'Contacts photo'
+            type: string
+            format: binary
+            default: null
         required:
           - name
           - email
