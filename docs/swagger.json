@@ -264,6 +264,12 @@
                   "isFavourite": {
                     "type": "boolean",
                     "description": "Indicates if the contact is marked as favourite."
+                  },
+                  "photo": {
+                    "description": "Contacts photo",
+                    "type": "string",
+                    "format": "binary",
+                    "default": null
                   }
                 },
                 "required": [
@@ -340,7 +346,6 @@
                 "required": [
                   "name",
                   "phoneNumber",
-                  "isFavourite",
                   "contactType"
                 ],
                 "properties": {
